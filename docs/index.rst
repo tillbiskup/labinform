@@ -1,10 +1,5 @@
-.. LabInform documentation master file, created by
-   sphinx-quickstart on Sat Nov 24 13:04:06 2018.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 LabInform documentation
-====================
+=======================
 
 Welcome! This is the documentation for LabInform. For general information see its `Homepage <https://www.labinform.de/>`_.
 
@@ -16,6 +11,7 @@ Welcome! This is the documentation for LabInform. For general information see it
    :maxdepth: 2
    :caption: Contents:
 
+   developers
    api/index
 
 
