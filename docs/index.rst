@@ -36,4 +36,4 @@ Indices and tables
 A note on the logo
 ------------------
 
-The copyright of the logo belongs to J. Popp.
+The "L" originates from the Computer Modern Roman font originally designed by Donald E. Knuth for his TeX typesetting system. As such, it represents science and the scientific method. Harbouring the "i" representing the information bit puts things right: Proper and reproducible science is the solid support for all the information we can retrieve. The copyright of the logo belongs to J. Popp.
