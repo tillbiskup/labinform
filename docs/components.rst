@@ -8,7 +8,7 @@ LabInform is generally very modular. This is one of the central concepts of the 
 IDs
 ===
 
-Subsequent numbers for samples, batches, substrates, syntheses and alike for unique asignments.
+Subsequent numbers for samples, batches, substrates, syntheses and alike for unique assignments.
 
 
 Metadata
@@ -23,8 +23,8 @@ Labbook (electronic lab notebook, ELN)
 Electronic lab notebook (ELN) in form of a wiki with (mostly) one entry per measurement.
 
 
-Datsafe
-=======
+Datasafe
+========
 
 Central data storage for all generated data, both experimental and calculated.
 
