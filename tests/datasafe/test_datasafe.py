@@ -1,6 +1,6 @@
 import unittest
-import tempfile
 import os
+from pathlib import Path
 
 import labinform.datasafe.datasafe as datasafe
 
@@ -75,51 +75,53 @@ class TestDatasafe(unittest.TestCase):
         self.assertEqual(bool, type(worked))
 
     def test_has_set_path_method(self):
-        self.assertTrue(hasattr(self.datasafe, 'setPath'))
-        self.assertTrue(callable(self.datasafe.setPath))
+        self.assertTrue(hasattr(self.datasafe, 'set_path'))
+        self.assertTrue(callable(self.datasafe.set_path))
 
     def test_call_set_path_with_parameters(self):
         try:
-            self.datasafe.setPath("")
+            self.datasafe.set_path("")
         except datasafe.NoSuchDirectoryError:
             pass
 
     def test_has_verify_path_method(self):
-        self.assertTrue(hasattr(self.datasafe, 'verifyPath'))
-        self.assertTrue(callable(self.datasafe.verifyPath))
+        self.assertTrue(hasattr(self.datasafe, 'verify_path'))
+        self.assertTrue(callable(self.datasafe.verify_path))
 
     def test_call_verify_path_with_parameters(self):
-        self.datasafe.verifyPath("")
+        self.datasafe.verify_path("")
 
     def test_verify_path_returns_bool(self):
-        pathOkay = self.datasafe.verifyPath("")
-        self.assertEqual(bool, type(pathOkay))
+        path_okay = self.datasafe.verify_path("")
+        self.assertEqual(bool, type(path_okay))
 
     def test_has_verify_own_path(self):
-        self.assertTrue(hasattr(self.datasafe, 'verifyOwnPath'))
-        self.assertTrue(callable(self.datasafe.verifyOwnPath))
+        self.assertTrue(hasattr(self.datasafe, 'verify_own_path'))
+        self.assertTrue(callable(self.datasafe.verify_own_path))
 
     def test_verify_own_path_returns_bool(self):
-        pathOkay = self.datasafe.verifyOwnPath()
+        pathOkay = self.datasafe.verify_own_path()
         self.assertEqual(bool, type(pathOkay))
 
     def test_has_loi_to_path_method(self):
-        self.assertTrue(hasattr(self.datasafe, 'loiToPath'))
-        self.assertTrue(callable(self.datasafe.loiToPath))
+        self.assertTrue(hasattr(self.datasafe, 'loi_to_path'))
+        self.assertTrue(callable(self.datasafe.loi_to_path))
 
     def test_call_loi_to_path_with_parameters(self):
-        self.datasafe.loiToPath("42.1001/ds/cwepr/sa42/01/data/raw")
+        self.datasafe.loi_to_path("42.1001/ds/cwepr/sa42/01/data/raw")
 
     def test_has_add_directory_method(self):
-        self.assertTrue(hasattr(self.datasafe, 'addDirectory'))
-        self.assertTrue(callable(self.datasafe.addDirectory))
+        self.assertTrue(hasattr(self.datasafe, 'add_directory'))
+        self.assertTrue(callable(self.datasafe.add_directory))
 
     def test_call_add_directory_with_parameters(self):
-        target_directory = "/home/kirchner/nas/Praktikum/datasafe-test"
-        temp_dir = tempfile.TemporaryDirectory(dir=target_directory)
-        datasafe_path = temp_dir.name
-        self.datasafe.setPath(datasafe_path)
-        self.datasafe.addDirectory(self.datasafe.path + "cwepr")
+        toplevel_directory = os.path.dirname(os.path.dirname(os.path.dirname(
+            os.path.dirname(__file__))))
+        self.target_directory = toplevel_directory + "/datasafe-test/ds"
+        if not os.path.exists(self.target_directory):
+            os.makedirs(self.target_directory)
+        self.datasafe.set_path(self.target_directory)
+        self.datasafe.add_directory(self.datasafe.path + "cwepr")
 
     #def test_has_dir_empty_method(self):
 
@@ -133,89 +135,95 @@ class TestGenerate(unittest.TestCase):
 class TestSetPath(unittest.TestCase):
     def setUp(self):
         self.datasafe = datasafe.Datasafe()
+        toplevel_directory = os.path.dirname(os.path.dirname(os.path.dirname(
+            os.path.dirname(__file__))))
+        self.target_directory = toplevel_directory + "/datasafe-test/ds"
+        if not os.path.exists(self.target_directory):
+            os.makedirs(self.target_directory)
 
     def tearDown(self):
-        pass
+        Path(self.target_directory).rmdir()
 
     def test_set_path(self):
-        target_directory = "/home/kirchner/nas/Praktikum/datasafe-test"
-        temp_dir = tempfile.TemporaryDirectory(dir=target_directory)
-        datasafe_path = temp_dir.name
-        self.datasafe.setPath(datasafe_path)
+        self.datasafe.set_path(self.target_directory)
         self.assertEqual(True, hasattr(self.datasafe, 'path'))
         self.assertEqual(str, type(self.datasafe.path))
 
     def test_set_path_raises_error_for_incorrect_path(self):
         with self.assertRaises(datasafe.NoSuchDirectoryError):
-            self.datasafe.setPath("")
+            self.datasafe.set_path("")
 
 
-class TestVerifyPath(unittest.TestCase):
+class TestPathManipulation(unittest.TestCase):
     def setUp(self):
         self.datasafe = datasafe.Datasafe()
+        toplevel_directory = os.path.dirname(os.path.dirname(os.path.dirname(
+            os.path.dirname(__file__))))
+        self.target_directory = toplevel_directory + "/datasafe-test/ds"
+        if not os.path.exists(self.target_directory):
+            os.makedirs(self.target_directory)
 
     def tearDown(self):
-        pass
+        Path(self.target_directory).rmdir()
 
     def test_verify_path_returns_false_for_incorrect_path(self):
-        pathOkay = self.datasafe.verifyPath("")
-        self.assertEqual(False, pathOkay)
+        path_okay = self.datasafe.verify_path("")
+        self.assertEqual(False, path_okay)
 
     def test_verify_path_returns_true_for_correct_path(self):
-        target_directory = "/home/kirchner/nas/Praktikum/datasafe-test"
-        temp_dir = tempfile.TemporaryDirectory(dir=target_directory)
-        datasafe_path = temp_dir.name
-        pathOkay = self.datasafe.verifyPath(datasafe_path)
-        self.assertEqual(True, pathOkay)
+        datasafe_path = self.target_directory
+        path_okay = self.datasafe.verify_path(datasafe_path)
+        self.assertEqual(True, path_okay)
 
     def test_verify_own_path_returns_false_when_path_not_set(self):
-        pathOkay = self.datasafe.verifyOwnPath()
-        self.assertEqual(False, pathOkay)
+        path_okay = self.datasafe.verify_own_path()
+        self.assertEqual(False, path_okay)
 
     def test_verify_own_path_returns_true_when_path_is_set(self):
-        target_directory = "/home/kirchner/nas/Praktikum/datasafe-test"
-        temp_dir = tempfile.TemporaryDirectory(dir=target_directory)
-        datasafe_path = temp_dir.name
-        self.datasafe.setPath(datasafe_path)
-        pathOkay = self.datasafe.verifyOwnPath()
-        self.assertEqual(True, pathOkay)
+        self.datasafe.set_path(self.target_directory)
+        path_okay = self.datasafe.verify_own_path()
+        self.assertEqual(True, path_okay)
 
 
 class TestLoiToPath(unittest.TestCase):
     def setUp(self):
         self.datasafe = datasafe.Datasafe()
-        target_directory = "/home/kirchner/nas/Praktikum/datasafe-test"
-        temp_dir = tempfile.TemporaryDirectory(dir=target_directory)
-        self.datasafe_path = temp_dir.name
-        self.datasafe.setPath(self.datasafe_path)
+        toplevel_directory = os.path.dirname(os.path.dirname(os.path.dirname(
+            os.path.dirname(__file__))))
+        self.target_directory = toplevel_directory + "/datasafe-test/ds"
+        if not os.path.exists(self.target_directory):
+            os.makedirs(self.target_directory)
+        self.datasafe.set_path(self.target_directory)
 
     def tearDown(self):
-        pass
+        Path(self.target_directory).rmdir()
 
     def test_correct_path_from_loi(self):
-        path_correct = self.datasafe_path + "/cwepr/sa42/01/data/raw"
-        path_experimental = self.datasafe.loiToPath("42.1001/ds/cwepr/sa42/01/data/raw")
+        path_correct = self.target_directory + "/cwepr/sa42/01/data/raw"
+        path_experimental = self.datasafe.loi_to_path("42.1001/ds/cwepr/sa42/01/data/raw")
         self.assertEqual(path_correct, path_experimental)
 
     def test_loi_to_path_raises_error_for_incorrect_loi(self):
         with self.assertRaises(datasafe.IncorrectLoiError):
-            self.datasafe.loiToPath("42.1001//raw")
+            self.datasafe.loi_to_path("42.1001//raw")
 
 
 class TestAddDirectory(unittest.TestCase):
     def setUp(self):
         self.datasafe = datasafe.Datasafe()
-        target_directory = "/home/kirchner/nas/Praktikum/datasafe-test"
-        temp_dir = tempfile.TemporaryDirectory(dir=target_directory)
-        self.datasafe_path = temp_dir.name
-        self.datasafe.setPath(self.datasafe_path)
+        toplevel_directory = os.path.dirname(os.path.dirname(os.path.dirname(
+            os.path.dirname(__file__))))
+        self.target_directory = toplevel_directory + "/datasafe-test/ds"
+        if not os.path.exists(self.target_directory):
+            os.makedirs(self.target_directory)
+        self.datasafe.set_path(self.target_directory)
 
     def tearDown(self):
-        pass
+        Path(self.target_directory).rmdir()
 
     def test_directory_is_added(self):
         path_complete = self.datasafe.path + "cwepr"
-        self.datasafe.addDirectory(path_complete)
+        self.datasafe.add_directory(path_complete)
         self.assertTrue(os.path.isdir(path_complete))
 
 

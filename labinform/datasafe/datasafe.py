@@ -34,37 +34,57 @@ class Datasafe:
     def __init__(self):
         self.path = ""
 
-    def setPath(self, path=""):
-        """Sets the path of the datasafe's toplevel directory.
+    def set_path(self, path=""):
+        """Set the path of the datasafe's toplevel directory.
 
-        :param path: The path that should be set as the instance attribute.
+        Parameters
+        ----------
+        path: :class: `str`
+            The path that should be set as the instance attribute.
         """
-        print(path)
-        if not self.verifyPath(path):
+        if not self.verify_path(path):
             raise NoSuchDirectoryError
         self.path = path
 
-    def verifyPath(self, path=""):
-        """Verifies if a path is correct.
+    @staticmethod
+    def verify_path(path=""):
+        """Verify if a path is correct.
 
-        :param path: path that should be checked
-        :return: result of the path check
+        Parameters
+        ----------
+        path: :class: `str`
+            path that should be checked
+        Returns
+        -------
+        path_okay: :class: `bool`
+            result opf the path check
         """
-        return os.path.isdir(path)
+        path_okay = os.path.isdir(path)
+        return path_okay
 
-    def verifyOwnPath(self):
-        """Verifies if the path set as instance attribute is a correct path.
+    def verify_own_path(self):
+        """Verify if the path set as instance attribute is a correct path.
 
-        :return: result of the path check
+        Returns
+        -------
+        path_okay: :class: `bool`
+            result opf the path check
         """
-        return self.verifyPath(self.path)
+        path_okay = self.verify_path(self.path)
+        return path_okay
 
-    def loiToPath(self, loi=""):
-        """Retrieves the a file's datasafe directory path from the
+    def loi_to_path(self, loi=""):
+        """Retrieve the a file's datasafe directory path from the
         corresponding loi.
 
-        :param loi: loi for which the path should be retrieved
-        :return: path of the file
+        Parameters
+        ----------
+        loi: :class: `str`
+            loi from which the path should be retrieved
+        Returns
+        -------
+        path: :class: `str`
+            path retrieved from the loi
         """
         path = self.path
         loi_parts = loi.split("/")
@@ -76,7 +96,14 @@ class Datasafe:
             path += part
         return path
 
-    def addDirectory(self, path):
+    def add_directory(self, path):
+        """Create a directory at a specified path
+
+        Parameters
+        ----------
+        path: :class: `str`
+            path of the directory that should be created
+        """
         if not os.path.exists(path):
             os.makedirs(path)
 
@@ -91,9 +118,17 @@ class Datasafe:
         Finally the method will return a unique identifier for the respective
         measurement and sample, including the directory path.
 
-        :param experiment: type of experiment performed, e.g. cwepr
-        :param sample_id: unique identifier for the sample measured
-        :return: unique loi including the information provided
+
+        Parameters
+        ----------
+        experiment: :class: `str`
+            type of experiment performed, e.g. 'cwepr'
+        sample_id: :class: `str`
+            unique identifier for the sample measured
+        Returns
+        -------
+        loi: :class: `str`
+            unique loi including the information provided
         """
         loi_basic = "42.1001/ds/"
 
@@ -105,8 +140,12 @@ class Datasafe:
         Before moving the existence of the target directory (as specified in
         the loi) as well as its emptiness are verified.
 
-        :param data: data (file) to be moved
-        :param loi: unique identifier providing the target directory
+        Parameters
+        ----------
+        data: :class: `str`
+            data (file) to be moved
+        loi: :class: `str`
+            unique identifier providing a directory path
         """
         pass
 
@@ -116,8 +155,14 @@ class Datasafe:
         Retrieves data from the datasafe if present at the target directory
         (as specified in the loi), raises an exception otherwise.
 
-        :param loi: identifier for the data (file) to be retrieved
-        :return: retrieved data
+        Parameters
+        ----------
+        loi: :class: `str`
+            unique identifier for the data to be retrieved
+        Returns
+        -------
+        xxxxxx: :class: `str`
+            retrieved data
         """
         return str()
 
@@ -128,9 +173,15 @@ class Datasafe:
         if present at the target directory (as specified in the loi), raises
         an exception otherwise.
 
-        :param loi: identifier for the data (file) for which the background
-         information should be retrieved
-        :return: background information (manifest.yaml) as dict
+        Parameters
+        ----------
+        loi: :class: `str`
+            unique identifier for the data for which the background information
+            should be retrieved.
+        Returns
+        -------
+        xxxxxx: :class: `str`
+            retrieved background information (manifest.yaml) as dict
         """
         return dict()
 
@@ -140,23 +191,40 @@ class Datasafe:
         Creates a checksum for a file in the datasafe if present at the target
         directory (as specified in the loi), raises an exception otherwise.
 
-        :param loi: identifier for the data (file) for which the checksum
-        should be created
-        :return: checksum (MD5)
+        Parameters
+        ----------
+        loi: :class: `str`
+            unique identifier for the data (file) for which a checksum should
+            be created
+        Returns
+        -------
+        xxxxxx: :class: `str`
+            checksum (MD5)
         """
         return str()
 
-    def moveto(self, data="", experiment="", sample=""):
-        """Wrapper function including all operations necessary for moving data
-        to the datasafe.
+    def moveto(self, data="", experiment="", sample_id=""):
+        """Prepare directory and move data there.
 
-        Calls :method:`generate` to generate a directory structure if
-        necessary and creates a local checksum of the file to be moved.
-        Then moves the file to the datasafe, creates another checksum.
+        This is a wrapper function which calls :method:`generate` to generate
+        a directory structure if necessary and creates a local checksum of
+        the file to be moved. Then moves the file to the datasafe, creates
+        another checksum.
         The two checksums are compared and the result of the comparation is
         returned.
 
-        :return: result of the checksum comparation
+        Parameters
+        ----------
+        data: :class: `str`
+            data (file) that should be moved inside the datasafe.
+        experiment: :class: `str`
+            type of experiment performed, e.g. 'cwepr'
+        sample_id: :class: `str`
+            unique identifier for the sample measured
+        Returns
+        -------
+        xxxxx: :class: `bool`
+            result of the checksum comparation
         """
         return True
 
