@@ -297,4 +297,7 @@ class TestFindHighest(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.target_directory[:-1])
 
+    def test_find_highest(self):
+        highest = self.datasafe.find_highest(self.target_directory[:-1])
+        self.assertEqual(1, highest)
 
