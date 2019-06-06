@@ -1,6 +1,7 @@
 import unittest
 import os
 from pathlib import Path
+import shutil
 
 import labinform.datasafe.datasafe as datasafe
 
@@ -100,8 +101,8 @@ class TestDatasafe(unittest.TestCase):
         self.assertTrue(callable(self.datasafe.verify_own_path))
 
     def test_verify_own_path_returns_bool(self):
-        pathOkay = self.datasafe.verify_own_path()
-        self.assertEqual(bool, type(pathOkay))
+        path_okay = self.datasafe.verify_own_path()
+        self.assertEqual(bool, type(path_okay))
 
     def test_has_loi_to_path_method(self):
         self.assertTrue(hasattr(self.datasafe, 'loi_to_path'))
@@ -115,34 +116,85 @@ class TestDatasafe(unittest.TestCase):
         self.assertTrue(callable(self.datasafe.add_directory))
 
     def test_call_add_directory_with_parameters(self):
-        toplevel_directory = os.path.dirname(os.path.dirname(os.path.dirname(
+        top_level_directory = os.path.dirname(os.path.dirname(os.path.dirname(
             os.path.dirname(__file__))))
-        self.target_directory = toplevel_directory + "/datasafe-test/ds"
+        self.target_directory = top_level_directory + "/datasafe-test/ds"
         if not os.path.exists(self.target_directory):
             os.makedirs(self.target_directory)
         self.datasafe.set_path(self.target_directory)
         self.datasafe.add_directory(self.datasafe.path + "cwepr")
 
-    #def test_has_dir_empty_method(self):
+    def test_has_dir_empty_method(self):
+        self.assertTrue(hasattr(self.datasafe, 'dir_empty'))
+        self.assertTrue(callable(self.datasafe.dir_empty))
+
+    def test_call_dir_empty_with_parameters(self):
+        self.datasafe.dir_empty(os.path.dirname(__file__))
+
+    def test_dir_empty_returns_bool(self):
+        dir_empty = self.datasafe.dir_empty(os.path.dirname(__file__))
+        self.assertEqual(bool, type(dir_empty))
+
+    def test_has_increment_method(self):
+        self.assertTrue(hasattr(self.datasafe, 'increment'))
+        self.assertTrue(callable(self.datasafe.increment))
+
+    def test_call_increment_with_parameters(self):
+        self.datasafe.increment(1)
+
+    def test_increment_returns_int(self):
+        incremented = self.datasafe.increment(1)
+        self.assertEqual(int, type(incremented))
+
+    def test_has_find_highest_method(self):
+        self.assertTrue(hasattr(self.datasafe, 'find_highest'))
+        self.assertTrue(callable(self.datasafe.find_highest))
+
+    def test_call_find_highest_with_parameters(self):
+        try:
+            self.datasafe.find_highest("")
+        except datasafe.NoSuchDirectoryError:
+            pass
+
+    #def test_find_highest_returns_int(self):
+    #    highest = self.datasafe.find_highest("")
+    #    self.assertEqual(int, type(highest))
+
+
+class TestEmptyDir(unittest.TestCase):
+    def setUp(self):
+        self.datasafe = datasafe.Datasafe()
+
+    def tearDown(self):
+        pass
+
+    def test_dir_empty_on_non_empty_dir(self):
+        path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+        print(path)
+        dir_empty = self.datasafe.dir_empty(path)
+        self.assertEqual(False, dir_empty)
 
 
 class TestGenerate(unittest.TestCase):
     def setUp(self):
         self.datasafe = datasafe.Datasafe()
-        #self.path =
+
+    def test_increment(self):
+        incremented = self.datasafe.increment(1)
+        self.assertEqual(2, incremented)
 
 
 class TestSetPath(unittest.TestCase):
     def setUp(self):
         self.datasafe = datasafe.Datasafe()
-        toplevel_directory = os.path.dirname(os.path.dirname(os.path.dirname(
+        top_level_directory = os.path.dirname(os.path.dirname(os.path.dirname(
             os.path.dirname(__file__))))
-        self.target_directory = toplevel_directory + "/datasafe-test/ds"
+        self.target_directory = top_level_directory + "/datasafe-test/ds"
         if not os.path.exists(self.target_directory):
             os.makedirs(self.target_directory)
 
     def tearDown(self):
-        Path(self.target_directory).rmdir()
+        shutil.rmtree(self.target_directory)
 
     def test_set_path(self):
         self.datasafe.set_path(self.target_directory)
@@ -153,18 +205,22 @@ class TestSetPath(unittest.TestCase):
         with self.assertRaises(datasafe.NoSuchDirectoryError):
             self.datasafe.set_path("")
 
+    def test_find_highest_raises_error(self):
+        with self.assertRaises(datasafe.DirNamesAreNotIntsError):
+            self.datasafe.find_highest(self.target_directory)
+
 
 class TestPathManipulation(unittest.TestCase):
     def setUp(self):
         self.datasafe = datasafe.Datasafe()
-        toplevel_directory = os.path.dirname(os.path.dirname(os.path.dirname(
+        top_level_directory = os.path.dirname(os.path.dirname(os.path.dirname(
             os.path.dirname(__file__))))
-        self.target_directory = toplevel_directory + "/datasafe-test/ds"
+        self.target_directory = top_level_directory + "/datasafe-test/ds"
         if not os.path.exists(self.target_directory):
             os.makedirs(self.target_directory)
 
     def tearDown(self):
-        Path(self.target_directory).rmdir()
+        shutil.rmtree(self.target_directory)
 
     def test_verify_path_returns_false_for_incorrect_path(self):
         path_okay = self.datasafe.verify_path("")
@@ -188,19 +244,20 @@ class TestPathManipulation(unittest.TestCase):
 class TestLoiToPath(unittest.TestCase):
     def setUp(self):
         self.datasafe = datasafe.Datasafe()
-        toplevel_directory = os.path.dirname(os.path.dirname(os.path.dirname(
+        top_level_directory = os.path.dirname(os.path.dirname(os.path.dirname(
             os.path.dirname(__file__))))
-        self.target_directory = toplevel_directory + "/datasafe-test/ds"
+        self.target_directory = top_level_directory + "/datasafe-test/ds"
         if not os.path.exists(self.target_directory):
             os.makedirs(self.target_directory)
         self.datasafe.set_path(self.target_directory)
 
     def tearDown(self):
-        Path(self.target_directory).rmdir()
+        shutil.rmtree(self.target_directory)
 
     def test_correct_path_from_loi(self):
         path_correct = self.target_directory + "/cwepr/sa42/01/data/raw"
-        path_experimental = self.datasafe.loi_to_path("42.1001/ds/cwepr/sa42/01/data/raw")
+        path_experimental = self.datasafe.loi_to_path(
+            "42.1001/ds/cwepr/sa42/01/data/raw")
         self.assertEqual(path_correct, path_experimental)
 
     def test_loi_to_path_raises_error_for_incorrect_loi(self):
@@ -211,25 +268,33 @@ class TestLoiToPath(unittest.TestCase):
 class TestAddDirectory(unittest.TestCase):
     def setUp(self):
         self.datasafe = datasafe.Datasafe()
-        toplevel_directory = os.path.dirname(os.path.dirname(os.path.dirname(
+        top_level_directory = os.path.dirname(os.path.dirname(os.path.dirname(
             os.path.dirname(__file__))))
-        self.target_directory = toplevel_directory + "/datasafe-test/ds"
+        self.target_directory = top_level_directory + "/datasafe-test/ds"
         if not os.path.exists(self.target_directory):
             os.makedirs(self.target_directory)
         self.datasafe.set_path(self.target_directory)
 
     def tearDown(self):
-        Path(self.target_directory).rmdir()
+        shutil.rmtree(self.target_directory)
 
     def test_directory_is_added(self):
-        path_complete = self.datasafe.path + "cwepr"
+        path_complete = self.datasafe.path + "/cwepr"
         self.datasafe.add_directory(path_complete)
         self.assertTrue(os.path.isdir(path_complete))
 
 
+class TestFindHighest(unittest.TestCase):
+    def setUp(self):
+        self.datasafe = datasafe.Datasafe()
+        top_level_directory = os.path.dirname(os.path.dirname(os.path.dirname(
+            os.path.dirname(__file__))))
+        self.target_directory = top_level_directory + "/datasafe-test/ds/1"
+        if not os.path.exists(self.target_directory):
+            os.makedirs(self.target_directory)
+        self.datasafe.set_path(self.target_directory)
 
-
-
-
+    def tearDown(self):
+        shutil.rmtree(self.target_directory[:-1])
 
 
