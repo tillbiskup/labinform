@@ -149,6 +149,11 @@ class Datasafe:
         return dir_content == list()
 
     @staticmethod
+    def has_dir(path=""):
+        has_dir = os.path.isdir(path)
+        return has_dir
+
+    @staticmethod
     def increment(number=0):
         """Increment an integer by one.
 
@@ -170,7 +175,7 @@ class Datasafe:
         path leads to doesn't exist, if it is empty or if the subdirectories
         are not 'numbered' an error is raised.
 
-        ..Todo: What happens, when there are 'numbered' files in the dir?
+        ..Todo: What happens, when there are 'numbered' _files_ in the dir?
 
         Parameters
         ----------
@@ -190,7 +195,8 @@ class Datasafe:
             except ValueError:
                 pass
         if dir_names == list():
-            raise DirNamesAreNotIntsError
+            return 0
+            #raise DirNamesAreNotIntsError
         else:
             highest = max(dir_names)
             return highest
@@ -221,7 +227,35 @@ class Datasafe:
 
         """
         loi_basic = "42.1001/ds/"
-        return "42.1001/ds/cwepr/sa42/01/data/raw"
+        path_for_loi = str()
+        path_for_loi = os.path.join(path_for_loi, experiment)
+        dir_path = os.path.join(self.path, path_for_loi)
+        if not self.has_dir(dir_path):
+            self.add_directory(dir_path)
+        path_for_loi = os.path.join(path_for_loi, sample_id)
+        dir_path = os.path.join(self.path, path_for_loi)
+        if not self.has_dir(dir_path):
+            self.add_directory(dir_path)
+        if self.dir_empty(dir_path):
+            path_for_loi = os.path.join(path_for_loi, "1")
+            dir_path = os.path.join(self.path, path_for_loi)
+        else:
+            number = str(self.increment(self.find_highest(dir_path)))
+            path_for_loi = os.path.join(path_for_loi, number)
+            dir_path = os.path.join(self.path, path_for_loi)
+        if not self.has_dir(dir_path):
+            self.add_directory(dir_path)
+        path_for_loi = os.path.join(path_for_loi, "data")
+        dir_path = os.path.join(self.path, path_for_loi)
+        if not self.has_dir(dir_path):
+            self.add_directory(dir_path)
+        path_for_loi = os.path.join(path_for_loi, "raw")
+        dir_path = os.path.join(self.path, path_for_loi)
+        if not self.has_dir(dir_path):
+            self.add_directory(dir_path)
+        #print(dir_path)
+        loi_complete = loi_basic + path_for_loi
+        return loi_complete
 
     def push(self, data="", loi=""):
         """Move data inside the datasafe.

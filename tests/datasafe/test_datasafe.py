@@ -17,12 +17,14 @@ class TestDatasafe(unittest.TestCase):
         self.assertTrue(hasattr(self.datasafe, 'generate'))
         self.assertTrue(callable(self.datasafe.generate))
 
+    @unittest.skip
     def test_call_generate_with_parameters(self):
         self.datasafe.generate("cwepr", "sa42")
 
+    @unittest.skip
     def test_generate_returns_loi(self):
         loi = self.datasafe.generate("cwepr", "sa42")
-        self.assertEqual("42.1001/ds/cwepr/sa42/01/data/raw", loi)
+        self.assertEqual("42.1001/ds/cwepr/sa42/2/data/raw", loi)
 
     def test_has_push_method(self):
         self.assertTrue(hasattr(self.datasafe, 'push'))
@@ -115,6 +117,7 @@ class TestDatasafe(unittest.TestCase):
         self.assertTrue(hasattr(self.datasafe, 'add_directory'))
         self.assertTrue(callable(self.datasafe.add_directory))
 
+    @unittest.skip
     def test_call_add_directory_with_parameters(self):
         top_level_directory = os.path.dirname(os.path.dirname(os.path.dirname(
             os.path.dirname(__file__))))
@@ -160,6 +163,17 @@ class TestDatasafe(unittest.TestCase):
     #    highest = self.datasafe.find_highest("")
     #    self.assertEqual(int, type(highest))
 
+    def test_has_has_dir_method(self):
+        self.assertTrue(hasattr(self.datasafe, 'has_dir'))
+        self.assertTrue(callable(self.datasafe.has_dir))
+
+    def test_call_has_dir_with_parameters(self):
+        self.datasafe.has_dir("")
+
+    def test_has_dir_returns_bool(self):
+        hasdir = self.datasafe.has_dir("")
+        self.assertEqual(bool, type(hasdir))
+
 
 class TestEmptyDir(unittest.TestCase):
     def setUp(self):
@@ -170,18 +184,42 @@ class TestEmptyDir(unittest.TestCase):
 
     def test_dir_empty_on_non_empty_dir(self):
         path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-        print(path)
         dir_empty = self.datasafe.dir_empty(path)
         self.assertEqual(False, dir_empty)
+
+    def test_has_dir_on_real_dir(self):
+        path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+        hasdir = self.datasafe.has_dir(path)
+        self.assertEqual(True, hasdir)
+
+    def test_has_dir_fail(self):
+        hasdir = self.datasafe.has_dir("")
+        self.assertEqual(False, hasdir)
 
 
 class TestGenerate(unittest.TestCase):
     def setUp(self):
         self.datasafe = datasafe.Datasafe()
+        top_level_directory = os.path.dirname(os.path.dirname(os.path.dirname(
+            os.path.dirname(__file__))))
+        self.target_directory = top_level_directory + "/datasafe-test/ds"
+        if not os.path.exists(self.target_directory):
+            os.makedirs(self.target_directory)
+        self.datasafe.set_path(self.target_directory)
+
+    def tearDown(self):
+        shutil.rmtree(self.target_directory)
 
     def test_increment(self):
         incremented = self.datasafe.increment(1)
         self.assertEqual(2, incremented)
+
+    def test_generate(self):
+        expected_loi = "42.1001/ds/cwepr/sa42/1/data/raw"
+        real_loi = self.datasafe.generate(experiment="cwepr", sample_id="sa42")
+        self.assertEqual(expected_loi, real_loi)
+        path_complete = os.path.join(self.datasafe.path, "cwepr/sa42/1/data/raw")
+        self.assertTrue(os.path.isdir(path_complete))
 
 
 class TestSetPath(unittest.TestCase):
@@ -204,10 +242,6 @@ class TestSetPath(unittest.TestCase):
     def test_set_path_raises_error_for_incorrect_path(self):
         with self.assertRaises(datasafe.NoSuchDirectoryError):
             self.datasafe.set_path("")
-
-    def test_find_highest_raises_error(self):
-        with self.assertRaises(datasafe.DirNamesAreNotIntsError):
-            self.datasafe.find_highest(self.target_directory)
 
 
 class TestPathManipulation(unittest.TestCase):
