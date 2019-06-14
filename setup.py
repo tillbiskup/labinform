@@ -7,10 +7,6 @@ with open(os.path.join(os.path.dirname(__file__), 'VERSION')) as version_file:
 with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as f:
     readme = f.read()
 
-with open(os.path.join(os.path.dirname(__file__), 'LICENSE')) as f:
-    license_ = f.read()
-
-
 setuptools.setup(
     name='LabInform',
     version=version,
@@ -24,7 +20,6 @@ setuptools.setup(
         'Documentation': 'https://docs.labinform.de/',
         'Source': 'https://github.com/tillbiskup/labinform',
     },
-    license=license_,
     packages=setuptools.find_packages(exclude=('tests', 'docs')),
     keywords=[
         'Reproducible research',
@@ -44,5 +39,5 @@ setuptools.setup(
     ],
     install_requires=[
     ],
-    python_requires='>=3',
+    python_requires='>=3.5',
 )
