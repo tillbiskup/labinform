@@ -8,7 +8,7 @@ with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as f:
     readme = f.read()
 
 setuptools.setup(
-    name='LabInform',
+    name='labinform',
     version=version,
     description='Framework for reproducible research.',
     long_description=readme,
