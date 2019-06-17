@@ -174,6 +174,17 @@ class TestDatasafe(unittest.TestCase):
         hasdir = self.datasafe.has_dir("")
         self.assertEqual(bool, type(hasdir))
 
+    def test_has_make_checksum_for_path_method(self):
+        self.assertTrue(hasattr(self.datasafe, 'make_checksum_for_path'))
+        self.assertTrue(callable(self.datasafe.make_checksum_for_path))
+
+    def test_call_make_checksum_for_path_with_parameters(self):
+        self.datasafe.make_checksum_for_path("")
+
+    def test_make_checksum_for_path_str(self):
+        checksum = self.datasafe.make_checksum_for_path("")
+        self.assertEqual(str, type(checksum))
+
 
 class TestEmptyDir(unittest.TestCase):
     def setUp(self):

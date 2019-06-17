@@ -312,6 +312,10 @@ class Datasafe:
 
         """
         return dict()
+    
+    def make_checksum_for_path(self, path=""):
+        checksum = str()
+        return checksum
 
     def checksum(self, loi=""):
         """Create a cryptographic hash (MD5) for a file in the datasafe.
