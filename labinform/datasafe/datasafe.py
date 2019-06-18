@@ -5,6 +5,8 @@ Functionality includes directory generation and checksum creation.
 """
 
 import os
+import hashlib
+import shutil
 
 
 class Error(Exception):
@@ -271,7 +273,10 @@ class Datasafe:
             unique identifier providing a directory path
 
         """
-        pass
+        target_path = self.loi_to_path(loi)
+        print(target_path)
+        shutil.copy(data, target_path)
+
 
     def pull(self, loi=""):
         """Retrieve data from the datasafe.
@@ -314,7 +319,11 @@ class Datasafe:
         return dict()
     
     def make_checksum_for_path(self, path=""):
-        checksum = str()
+        md5 = hashlib.md5()
+        with open(path, "rb") as f:
+            for line in f.readlines():
+                md5.update(line)
+        checksum = md5.hexdigest()
         return checksum
 
     def checksum(self, loi=""):

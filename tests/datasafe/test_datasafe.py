@@ -30,6 +30,7 @@ class TestDatasafe(unittest.TestCase):
         self.assertTrue(hasattr(self.datasafe, 'push'))
         self.assertTrue(callable(self.datasafe.push))
 
+    @unittest.skip
     def test_call_push_with_parameters(self):
         self.datasafe.push("", "42.1001/ds/cwepr/sa42/01/data/raw")
 
@@ -178,10 +179,12 @@ class TestDatasafe(unittest.TestCase):
         self.assertTrue(hasattr(self.datasafe, 'make_checksum_for_path'))
         self.assertTrue(callable(self.datasafe.make_checksum_for_path))
 
+    @unittest.skip
     def test_call_make_checksum_for_path_with_parameters(self):
         self.datasafe.make_checksum_for_path("")
 
-    def test_make_checksum_for_path_str(self):
+    @unittest.skip
+    def test_make_checksum_for_path_returns_str(self):
         checksum = self.datasafe.make_checksum_for_path("")
         self.assertEqual(str, type(checksum))
 
@@ -346,3 +349,46 @@ class TestFindHighest(unittest.TestCase):
         highest = self.datasafe.find_highest(self.target_directory[:-1])
         self.assertEqual(1, highest)
 
+
+class TestChecksumPath(unittest.TestCase):
+    def setUp(self):
+        self.datasafe = datasafe.Datasafe()
+        top_level_directory = os.path.dirname(os.path.dirname(os.path.dirname(
+            os.path.dirname(__file__))))
+        self.target_directory = top_level_directory + "/datasafe-test/cwepr/sa571/1"
+        self.target_file = self.target_directory + "/data/raw/Manifest.yaml"
+
+    def test_correct_checksum_for_yaml(self):
+        md5 = self.datasafe.make_checksum_for_path(self.target_file)
+        self.assertEqual("48aa739357f70bd7694fcf0ebc3a2e24", md5)
+
+
+class TestChecksum(unittest.TestCase):
+    pass
+
+
+class TestPush(unittest.TestCase):
+    def setUp(self):
+        self.datasafe = datasafe.Datasafe()
+        top_level_directory = os.path.dirname(os.path.dirname(os.path.dirname(
+            os.path.dirname(__file__))))
+        self.common_directory = top_level_directory + "/datasafe-test"
+        self.target_directory = self.common_directory + "/ds"
+        if not os.path.exists(self.target_directory):
+            os.makedirs(self.target_directory)
+        self.datasafe.set_path(self.target_directory)
+        self.target_file = self.common_directory + "/cwepr/sa571/1/data/raw/Manifest.yaml"
+
+    def tearDown(self):
+        #shutil.rmtree(self.target_directory)
+        pass
+
+    def test_push(self):
+        print("target file: " + self.target_file)
+        loi = self.datasafe.generate(experiment="cwepr", sample_id="sa42")
+        self.assertEqual(True, self.datasafe.has_dir(self.datasafe.path + "/cwepr/sa571/1/data/raw"))                                 
+        print(loi)
+        self.datasafe.push(self.target_file, loi)
+        final_path = self.datasafe.path + "/cwepr/sa571/1/data/raw/Manifest.yaml"
+        print(final_path)
+        self.assertEqual(True, self.datasafe.has_dir(final_path))
