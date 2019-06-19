@@ -255,7 +255,6 @@ class Datasafe:
         dir_path = os.path.join(self.path, path_for_loi)
         if not self.has_dir(dir_path):
             self.add_directory(dir_path)
-        #print(dir_path)
         loi_complete = loi_basic + path_for_loi
         return loi_complete
 

@@ -373,22 +373,22 @@ class TestPush(unittest.TestCase):
         top_level_directory = os.path.dirname(os.path.dirname(os.path.dirname(
             os.path.dirname(__file__))))
         self.common_directory = top_level_directory + "/datasafe-test"
-        self.target_directory = self.common_directory + "/ds"
+        self.target_directory = top_level_directory + "/datasafe-test/ds"
+        print(self.target_directory)
         if not os.path.exists(self.target_directory):
             os.makedirs(self.target_directory)
         self.datasafe.set_path(self.target_directory)
         self.target_file = self.common_directory + "/cwepr/sa571/1/data/raw/Manifest.yaml"
 
     def tearDown(self):
-        #shutil.rmtree(self.target_directory)
-        pass
+        shutil.rmtree(self.target_directory)
 
     def test_push(self):
-        print("target file: " + self.target_file)
-        loi = self.datasafe.generate(experiment="cwepr", sample_id="sa42")
-        self.assertEqual(True, self.datasafe.has_dir(self.datasafe.path + "/cwepr/sa571/1/data/raw"))                                 
-        print(loi)
+        loi = self.datasafe.generate(experiment="cwepr", sample_id="sa571")
+        self.assertEqual(True, self.datasafe.has_dir(self.datasafe.path + "/cwepr/sa571/1/data/raw"))
         self.datasafe.push(self.target_file, loi)
         final_path = self.datasafe.path + "/cwepr/sa571/1/data/raw/Manifest.yaml"
-        print(final_path)
-        self.assertEqual(True, self.datasafe.has_dir(final_path))
+        self.assertEqual(True, os.path.isfile(final_path))
+
+
+
