@@ -32,6 +32,16 @@ And to make it even more convenient for users and future-proof:
   LabInform is currently under active development and still considered in Alpha development state. Therefore, expect frequent changes in features and public APIs that may break your own code. Nevertheless, feedback as well as feature requests are highly welcome.
 
 
+Installation
+------------
+
+Install the package by running::
+
+  pip install labinform
+
+This will install the version from the `Python Package Index (PyPI) <https://pypi.org/>`_. To get the latest development version, clone the repository from `GitHub <https://github.com/tillbiskup/labinform>`_ and install it locally. In any case, it is highly recommended to use virtual environments to separate dependencies.
+
+
 
 Where to start
 --------------

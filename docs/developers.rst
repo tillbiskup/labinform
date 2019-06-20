@@ -58,3 +58,19 @@ A general overview of the overall package structure::
 
 As you can see, currently three subpackages, namely "datasafe", "loi", and "eln", are supposed to be created. For details of the LabInform project as such, consult its `Homepage <https://www.labinform.de/>`_.
 
+
+Docstring format
+----------------
+
+The Docstring format used within the code of the LabInform package is "NumPy". For convenience, set your IDE accordingly.
+
+For PyCharm, the settings can be found in ``Preferences`` > ``Tools`` > ``Python Integrated Tools``. Here, you find a section "Docstrings" where you can select the Docstring format from a number of different formats.
+
+
+Unittests and test driven development
+-------------------------------------
+
+Developing the LabInform code should be done test-driven wherever possible. The tests reside in the ``tests`` directory in the respective subpackage directory (see above).
+
+Tests should be written using the Python :mod:`unittest` framework. Make sure that tests are independent of the respective local environment and clean up afterwards (using appropriate ``teardown`` methods).
+
